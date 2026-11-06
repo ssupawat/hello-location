@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hello</title>
+<style>
+  :root { --bg: #fafafa; --fg: #111; --muted: #666; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #111; --fg: #f2f2f2; --muted: #999; } }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: grid; place-items: center; text-align: center;
+    background: var(--bg); color: var(--fg);
+    font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", sans-serif;
+  }
+  h1 { font-size: clamp(2.5rem, 10vw, 6rem); margin: 0; }
+  p { color: var(--muted); font-size: 1.1rem; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="greet">Hello</h1>
+  <p id="place">&nbsp;</p>
+</main>
+<script>
+const GREETINGS = {
+  TH: "สวัสดี", JP: "こんにちは", CN: "你好", TW: "你好", HK: "你好", KR: "안녕하세요",
+  VN: "Xin chào", LA: "ສະບາຍດີ", KH: "សួស្តី", MM: "မင်္ဂလာပါ", ID: "Halo", MY: "Hai",
+  PH: "Kumusta", IN: "नमस्ते", FR: "Bonjour", DE: "Hallo", AT: "Hallo", ES: "Hola",
+  MX: "Hola", AR: "Hola", IT: "Ciao", PT: "Olá", BR: "Olá", NL: "Hallo",
+  RU: "Привет", UA: "Привіт", PL: "Cześć", SE: "Hej", NO: "Hei", DK: "Hej",
+  FI: "Hei", TR: "Merhaba", GR: "Γεια σας", IL: "שלום", SA: "مرحبا", AE: "مرحبا", EG: "مرحبا"
+};
+
+function show(code, city, country) {
+  document.getElementById("greet").textContent = GREETINGS[code] || "Hello";
+  const place = [city, country].filter(Boolean).join(", ");
+  if (place) document.getElementById("place").textContent = place;
+}
+
+fetch("https://get.geojs.io/v1/ip/geo.json")
+  .then(r => r.json())
+  .then(d => show((d.country_code || "").toUpperCase(), d.city, d.country))
+  .catch(() => {
+    const region = (navigator.language.split("-")[1] || "").toUpperCase();
+    show(region, "", "");
+  });
+</script>
+</body>
+</html>
